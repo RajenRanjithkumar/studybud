@@ -1,13 +1,30 @@
 from django.shortcuts import render
-
+from .models import Room
 
 # Create your views here.
 
 
+# rooms = [
+#     {'id':1, 'name':"Lets Learn python!!"},
+#     {'id':2, 'name':"Design"},
+#     {'id':3, 'name':"with django"}
+# ]
+
+
 def home(request):
+    
+    # the gets all the objects
+    rooms = Room.objects.all()
 
-    return render(request, "home.html")
+    context = {'rooms': rooms}
 
-def room(request):
+    return render(request, "base/home.html", context) # passing the rooms dict to the html file
 
-    return render(request, "room.html")
+def room(request, pk):
+
+    # get a specific object from Room DB
+    room = Room.objects.get(id = pk)
+
+    context = {"room": room}
+
+    return render(request, "base/room.html", context)
