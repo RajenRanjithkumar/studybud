@@ -25,6 +25,11 @@ class Room(models.Model):
     updated = models.DateTimeField(auto_now = True) 
     created = models.DateTimeField(auto_now_add = True) # this will just save the time when it was created
 
+
+    # to put the recently created room at the top
+    class Meta:
+        ordering = ["-updated", "-created"]
+
     def __str__ (self):
         return self.name
 

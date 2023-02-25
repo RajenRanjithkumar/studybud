@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Room
 from .forms import RoomForm
 
@@ -33,7 +33,58 @@ def room(request, pk):
 
 def createRoom(request):
 
-
     form = RoomForm()
+
+    # get the data from the user
+    if request.method == 'POST':
+
+        #will process all the input data 
+        form = RoomForm(request.POST)
+        if form.is_valid():
+
+            #will save the data in the db
+            form.save()
+
+            #send the user to the home page
+            return redirect("home")
+
+
+
     context = {"form": form}
     return render(request, "base/room_form.html", context)
+
+# pk primary key
+def updateRoom(request, pk):
+
+    room = Room.objects.get(id = pk)
+
+    # instance=room will pre fill the form with the existing contents
+    form = RoomForm(instance=room)
+   
+    # update DB
+    if request.method == 'POST':
+
+        form = RoomForm(request.POST, instance=room) # instance=room will update the value of that paticular room
+                                                     # else it will create a new entry
+
+        if form.is_valid():
+            form.save()
+            return redirect("home")
+
+
+    context = {'form': form}
+    return render(request, "base/room_form.html", context)
+
+def deleteRoom(request, pk):
+
+    room = Room.objects.get(id = pk)
+
+    if request.method == 'POST':
+
+        room.delete()
+
+        return redirect("home")
+
+
+    return render(request, "base/delete.html", {'obj':room})
+
