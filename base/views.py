@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Room
+from .models import Room, Topic
 from .forms import RoomForm
 
 # Create your views here.
@@ -14,12 +14,16 @@ from .forms import RoomForm
 
 def home(request):
     
+
+    q = request.GET.get('q') if request.GET.get('q') != None else ''    # '' will fetch the entire dataset 
     # the gets all the objects
-    rooms = Room.objects.all()
+    rooms = Room.objects.filter(topic__name__icontains = q)             #topic__name__icontains is the query i in icontains represents case sensitive
 
-    context = {'rooms': rooms}
+    topics = Topic.objects.all()
 
-    return render(request, "base/home.html", context) # passing the rooms dict to the html file
+    context = {'rooms': rooms, 'topics': topics}
+
+    return render(request, "base/home.html", context)                    # passing the rooms dict to the html file
 
 def room(request, pk):
 
@@ -84,7 +88,6 @@ def deleteRoom(request, pk):
         room.delete()
 
         return redirect("home")
-
 
     return render(request, "base/delete.html", {'obj':room})
 
