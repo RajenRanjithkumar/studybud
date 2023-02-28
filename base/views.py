@@ -6,6 +6,8 @@ from django.db.models import Q # to include or/and condition for queries
 from django.contrib.auth.models import User
 from django.contrib import messages  
 from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -19,19 +21,30 @@ from django.contrib.auth import authenticate, login, logout
 
 def loginPage(request):
 
+    page = "login"
+
+
+    if request.user.is_authenticated:
+        return redirect('home')
+
 
     if request.method == "POST":
 
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        try:
+        
 
-            user = User.objects.get(username = username)
+        if username != '' and password != '':
+            try:
+                user = User.objects.get(username = username)
+            except:
 
-        except:
+                messages.error(request, " User does not exist ") #Django flash messages
+        else:
+            messages.error(request, " Username or password cannot be empty ") #Django flash messages
 
-            messages.error(request, " User does not exist ") #Django flash messages
+        
 
         user = authenticate(request, username=username, password=password)
 
@@ -43,14 +56,20 @@ def loginPage(request):
             messages.error(request, "Username or password does not exist")
             
 
-    context ={}
+    context ={"page":page}
     return render(request, "base/login_register.html", context)
 
 def logoutUser(request):
+    
     logout(request)
 
     return redirect('home')
 
+def registerPage(request):
+
+    page = "register"
+
+    return render(request, "base/login_register.html")
 
 
 def home(request):
@@ -84,6 +103,7 @@ def room(request, pk):
     return render(request, "base/room.html", context)
 
 
+@login_required(login_url='login')  #decorater to force a user to login before logging in
 def createRoom(request):
 
     form = RoomForm()
@@ -110,10 +130,13 @@ def createRoom(request):
 def updateRoom(request, pk):
 
     room = Room.objects.get(id = pk)
-
     # instance=room will pre fill the form with the existing contents
     form = RoomForm(instance=room)
-   
+
+    
+    if request.user != room.host:
+        return HttpResponse('you are not allowed here')
+
     # update DB
     if request.method == 'POST':
 
@@ -131,6 +154,9 @@ def updateRoom(request, pk):
 def deleteRoom(request, pk):
 
     room = Room.objects.get(id = pk)
+
+    if request.user != room.host:
+        return HttpResponse('you are not allowed here')
 
     if request.method == 'POST':
 
