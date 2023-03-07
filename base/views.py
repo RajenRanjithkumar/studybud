@@ -121,6 +121,8 @@ def room(request, pk):
     # order_by('-')  to get the coverasations in descending order
     room_messages = room.message_set.all().order_by('-created') 
 
+    participants = room.participants.all()
+
     if request.method =='POST':
 
         message = Message.objects.create(
@@ -131,12 +133,15 @@ def room(request, pk):
 
         )
 
+        #add messaging user to ROOm participants
+        room.participants.add(request.user)
+
         return redirect('room', pk = room.id)
 
 
-
-
-    context = {"room": room, "room_messages": room_messages}
+    context = {"room": room, 
+               "room_messages": room_messages, 
+               "participants":participants}
 
     return render(request, "base/room.html", context)
 
@@ -189,6 +194,8 @@ def updateRoom(request, pk):
     context = {'form': form}
     return render(request, "base/room_form.html", context)
 
+## later added
+@login_required(login_url='login') 
 def deleteRoom(request, pk):
 
     room = Room.objects.get(id = pk)
@@ -203,4 +210,24 @@ def deleteRoom(request, pk):
         return redirect("home")
 
     return render(request, "base/delete.html", {'obj':room})
+
+
+@login_required(login_url='login') 
+def deleteMessage(request, pk):
+
+    message = Message.objects.get(id = pk)
+    room = message.room
+
+    if request.user != message.user:
+        return HttpResponse('you are not allowed here')
+
+    if request.method == 'POST':
+
+        message.delete()
+
+        return redirect('room', pk = room.id)
+        #return redirect("home")
+
+    return render(request, "base/delete.html", {'obj':message})
+
 
