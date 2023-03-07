@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Room, Topic
+from .models import Room, Topic, Message
 from .forms import RoomForm
 from django.db.models import Q # to include or/and condition for queries 
 
@@ -31,7 +31,7 @@ def loginPage(request):
 
     if request.method == "POST":
 
-        username = request.POST.get('username')
+        username = request.POST.get('username').lower()
         password = request.POST.get('password')
 
         
@@ -72,6 +72,21 @@ def registerPage(request):
 
     form = UserCreationForm()
 
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            
+            user = form.save(commit=False)
+            user.username = user.username.lower()
+            user.save()
+
+            login(request, user)
+            return redirect('home')
+        else:
+
+            messages.error(request, "An error occured during registration")
+
+
     return render(request, "base/login_register.html", {'form':form})
 
 
@@ -93,15 +108,35 @@ def home(request):
     room_count = rooms.count()
 
     context = {'rooms': rooms, 'topics': topics, 'room_count':room_count}
-
-    return render(request, "base/home.html", context)                    # passing the rooms dict to the html file
+    
+    # passing the rooms dict to the html file
+    return render(request, "base/home.html", context)                    
 
 def room(request, pk):
 
     # get a specific object from Room DB
     room = Room.objects.get(id = pk)
 
-    context = {"room": room}
+    # query to get all the messages of a particular room
+    # order_by('-')  to get the coverasations in descending order
+    room_messages = room.message_set.all().order_by('-created') 
+
+    if request.method =='POST':
+
+        message = Message.objects.create(
+
+            user = request.user,
+            room = room,
+            body = request.POST.get('body') # get the message from html form
+
+        )
+
+        return redirect('room', pk = room.id)
+
+
+
+
+    context = {"room": room, "room_messages": room_messages}
 
     return render(request, "base/room.html", context)
 
