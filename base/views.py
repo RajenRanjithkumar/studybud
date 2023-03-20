@@ -174,16 +174,21 @@ def createRoom(request):
         form = RoomForm(request.POST)
         if form.is_valid():
 
+            # to make the logged in user as the host
+            room = form.save(commit=False)
+            room.host = request.user
+            room.save()
+
             #will save the data in the db
-            form.save()
+            #form.save()
 
             #send the user to the home page
             return redirect("home")
 
-
-
     context = {"form": form}
     return render(request, "base/room_form.html", context)
+
+
 
 # pk primary key
 def updateRoom(request, pk):

@@ -3,11 +3,6 @@ from . import views  # import the views from base folder
 
 
 
-
-
-
-
-
 urlpatterns = [
 
     
@@ -25,4 +20,4 @@ urlpatterns = [
     
 ]
 
-#youtube 3:43
+#youtube 3:53
