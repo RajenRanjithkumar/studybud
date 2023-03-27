@@ -168,35 +168,59 @@ def createRoom(request):
 
     form = RoomForm()
 
+    topics = Topic.objects.all()
+
     # get the data from the user
     if request.method == 'POST':
 
-        #will process all the input data 
-        form = RoomForm(request.POST)
-        if form.is_valid():
 
-            # to make the logged in user as the host
-            room = form.save(commit=False)
-            room.host = request.user
-            room.save()
+        topic_name = request.POST.get('topic')
+
+        # get_or_create():
+        #     if the topic is already available in db 
+        #         it assigns to topic
+        #     else 
+        #         it assigns to created
+
+        topic, created = Topic.objects.get_or_create(name = topic_name)
+
+        Room.objects.create(
+
+            host = request.user,
+            topic = topic,
+            name = request.POST.get('name'),
+            description = request.POST.get('description'),
+
+        )
+
+        #will process all the input data 
+        # form = RoomForm(request.POST)
+        # if form.is_valid():
+
+        #     # to make the logged in user as the host
+        #     room = form.save(commit=False)
+        #     room.host = request.user
+        #     room.save()
 
             #will save the data in the db
             #form.save()
 
             #send the user to the home page
-            return redirect("home")
+        return redirect("home")
 
-    context = {"form": form}
+    context = {"form": form, 'topics': topics}
     return render(request, "base/room_form.html", context)
 
 
 
 # pk primary key
+@login_required(login_url='login')
 def updateRoom(request, pk):
 
     room = Room.objects.get(id = pk)
     # instance=room will pre fill the form with the existing contents
     form = RoomForm(instance=room)
+    topics = Topic.objects.all()
 
     
     if request.user != room.host:
@@ -205,15 +229,31 @@ def updateRoom(request, pk):
     # update DB
     if request.method == 'POST':
 
-        form = RoomForm(request.POST, instance=room) # instance=room will update the value of that paticular room
-                                                     # else it will create a new entry
 
-        if form.is_valid():
-            form.save()
-            return redirect("home")
+        topic_name = request.POST.get('topic')
+
+        # get_or_create():
+        #     if the topic is already available in db 
+        #         it assigns to topic
+        #     else 
+        #         it assigns to created
+
+        topic, created = Topic.objects.get_or_create(name = topic_name)
+
+        room.topic = topic
+        room.name = request.POST.get('name')
+        room.description = request.POST.get('description')
+        room.save()
+
+        # form = RoomForm(request.POST, instance=room) # instance=room will update the value of that paticular room
+        #                                              # else it will create a new entry
+
+        # if form.is_valid():
+        #     form.save()
+        return redirect("home")
 
 
-    context = {'form': form}
+    context = {'form': form, 'topics': topics, 'room':room}
     return render(request, "base/room_form.html", context)
 
 ## later added

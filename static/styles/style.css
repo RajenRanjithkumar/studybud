@@ -460,7 +460,7 @@ a {
 }
 
 .layout__body {
-  margin: 3rem;
+  margin: 10rem;
 }
 
 @media screen and (max-width: 900px) {
