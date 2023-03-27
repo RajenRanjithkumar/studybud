@@ -126,6 +126,7 @@ def room(request, pk):
     room_messages = room.message_set.all()
     participants = room.participants.all()
 
+    #get the message from front end
     if request.method =='POST':
 
         message = Message.objects.create(
@@ -136,7 +137,7 @@ def room(request, pk):
 
         )
 
-        #add messaging user to ROOm participants
+        #add messaging user to Room participants
         room.participants.add(request.user)
 
         return redirect('room', pk = room.id)
@@ -152,8 +153,8 @@ def room(request, pk):
 def userProfile(request, pk):
 
     user = User.objects.get(id=pk)
-
-    rooms = user.room_set.all() # get all the user rooms 
+    # get all the user rooms 
+    rooms = user.room_set.all() 
     room_messages = user.message_set.all()
     topics = Topic.objects.all()
 
