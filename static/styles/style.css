@@ -747,15 +747,15 @@ a {
 }
 
 .activities__box {
-  margin: 1.5rem;
-  padding: 1.5rem;
+  margin: 1rem;
+  padding: 1rem;
   border: 2px solid var(--color-dark-medium);
-  border-radius: 5px;
+  border-radius: 10px;
 }
 
 .activities__boxHeader p {
   font-size: 1.4rem;
-  line-height: 1.3;
+  line-height: 1.2;
 }
 
 .activities__boxHeader p span {
@@ -769,7 +769,7 @@ a {
 }
 
 .activities__boxContent {
-  font-size: 1.4rem;
+  font-size: 1rem;
 }
 
 .activities__boxContent a:hover {
