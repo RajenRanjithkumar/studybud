@@ -1,5 +1,6 @@
 from django.forms import ModelForm
 from .models import Room
+from django.contrib.auth.models import User
 
 
 # class based form that will be created automatically by django wrt Data class
@@ -8,3 +9,8 @@ class RoomForm(ModelForm):
         model = Room
         fields = '__all__' # this will render all the input fields with wrt to our ROOM data class
         exclude = ['host','participants']
+
+class UserForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ['username','email']
