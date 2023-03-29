@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     "corsheaders",
 ]
 
+# to user our own custom User model instead of Django's default one
+AUTH_USER_MODEL = 'base.User'
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
 
@@ -125,12 +128,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = "static/"
+MEDIA_URL = '/images/'
+
 
 # Let Django know about the static files - > images, css styles
 STATICFILES_DIRS = [
     BASE_DIR/ 'static'
 
 ]
+
+
+# path to save all the user uploaded images
+MEDIA_ROOT = BASE_DIR / 'static/images'
 
 # STATIC_ROOT = 
 

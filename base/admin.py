@@ -3,9 +3,10 @@ from django.contrib import admin
 # Register your models here.
 
 
-from .models import Room, Topic, Message
+from .models import Room, Topic, Message, User
 
 
+admin.site.register(User)
 #add the Room db access to the 
 admin.site.register(Room)
 

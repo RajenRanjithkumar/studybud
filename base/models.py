@@ -1,7 +1,26 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+#from django.contrib.auth.models import User
 # Create your models here.
 
+
+
+class User(AbstractUser):
+
+    name =models.CharField(max_length=200, null=True)
+    email = models.EmailField(unique=True, null=True)
+    bio = models.TextField(null=True)
+
+    avatar = models.ImageField(null=True, default="avatar.svg")
+
+    # Login using email instead username
+    # dont forget to migrate after modifications
+    # -> python manage.py makemigrations
+    # -> python manage.py migrate
+    USERNAME_FIELD = 'email'
+
+    REQUIRED_FIELDS = []
+    
 
 
 # Data class

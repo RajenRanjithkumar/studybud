@@ -2,14 +2,17 @@ from django.shortcuts import render, redirect
 
 from django.db.models import Q # to include or/and condition for queries 
 
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
+# importing our own user model
+from .models import Room, Topic, Message, User
+
 from django.contrib import messages  
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm  #djangos default form
 
-from .models import Room, Topic, Message
+
 from .forms import RoomForm, UserForm
 
 # Create your views here.
