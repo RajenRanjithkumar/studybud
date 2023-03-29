@@ -20,5 +20,7 @@ from django.http import HttpResponse
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("base.urls")) #send the user to the urls inside the base app
+    path("", include("base.urls")),#send the user to the urls inside the base app
+    path("api/", include('base.api.urls'))
+
 ]
