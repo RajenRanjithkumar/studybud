@@ -23,7 +23,11 @@
                     </div>
                 </div>
                 <div class="layout__body">
-                    <form class="form" action="" method="POST">
+
+                    <!-- enctype="multipart/form-data"
+                    this is used when files like images needs to be sended as a form -->
+
+                    <form class="form" action="" method="POST" enctype="multipart/form-data">
 
                       {% csrf_token %}
 
